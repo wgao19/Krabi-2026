@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krabi Trip · 11–27 Dec 2026</title>
+<style>
+  :root { --ink:#1b1f24; --mute:#667085; --line:#e4e7ec; --bg:#f7f8fa; --card:#fff; --accent:#1a56db; --lock:#f2f4f7; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width:640px; margin:0 auto; padding:16px 14px 64px; }
+  h1 { font-size:22px; margin:4px 0 2px; }
+  .sub { color:var(--mute); font-size:14px; margin:0 0 14px; }
+  .tabs { display:flex; gap:6px; background:#e9ecf1; padding:4px; border-radius:10px; margin-bottom:14px; position:sticky; top:0; z-index:5; }
+  .tabs button { flex:1; border:0; background:transparent; padding:10px; font:inherit; font-weight:600; color:var(--mute); border-radius:8px; }
+  .tabs button[aria-selected="true"] { background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12); }
+  .note { font-size:13px; color:var(--mute); margin:0 0 12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; }
+  .card.locked { background:var(--card); }
+  .kind { font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--mute); }
+  .name { font-size:18px; font-weight:700; margin:2px 0 6px; }
+  .row { display:flex; justify-content:space-between; gap:12px; padding:4px 0; font-size:15px; }
+  .row span:first-child { color:var(--mute); }
+  .row span:last-child { text-align:right; }
+  .big { display:flex; justify-content:space-between; align-items:center; margin:8px 0; }
+  .big div b { font-size:24px; display:block; line-height:1.1; }
+  .big div small { color:var(--mute); }
+  .big .arrow { color:var(--mute); font-size:13px; text-align:center; }
+  .lockline { font-size:12px; color:var(--mute); margin-top:8px; }
+  .day { padding:0; overflow:hidden; }
+  .dayhead { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line); background:#fcfcfd; }
+  .dayhead b { font-size:16px; }
+  .dayhead .n { color:var(--mute); font-size:13px; margin-left:6px; font-weight:400; }
+  .daybody { padding:12px 14px 14px; }
+  label { display:block; font-size:12px; font-weight:600; color:var(--mute); margin:10px 0 3px; }
+  label:first-child { margin-top:0; }
+  input[type=text], textarea { width:100%; font:inherit; font-size:16px; color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:9px 10px; background:#fff; }
+  input[type=text]:focus, textarea:focus { outline:2px solid #b8cdfa; border-color:var(--accent); }
+  textarea { resize:none; min-height:44px; overflow:hidden; }
+  .locks { margin-bottom:10px; }
+  .lk { background:var(--lock); border-radius:8px; padding:7px 10px; font-size:14px; margin-bottom:5px; display:flex; gap:8px; }
+  .lk b { font-variant-numeric: tabular-nums; min-width:44px; }
+  .status-unused { position:fixed; bottom:12px; left:50%; transform:translateX(-50%); background:#1b1f24; color:#fff; font-size:13px; padding:6px 12px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .status.show { opacity:.92; }
+  a { color:var(--accent); }
+  .it { display:flex; gap:12px; padding:11px 2px; border-bottom:1px solid var(--line); }
+  .it:last-child { border-bottom:0; }
+  .it .d { width:58px; flex:none; }
+  .it .d b { display:block; font-size:17px; line-height:1.2; }
+  .it .d small { color:var(--mute); font-size:12px; }
+  .it .m { flex:1; min-width:0; }
+  .it .t { font-weight:600; font-size:16px; }
+  .it .t.empty { color:var(--mute); font-weight:400; }
+  .it .w { color:var(--accent); font-size:13px; font-weight:600; }
+  .it .x { font-size:13px; color:var(--mute); margin-top:3px; }
+  .it .nt { font-size:14px; margin-top:3px; white-space:pre-wrap; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Krabi Trip</h1>
+  <p class="sub">Fri 11 – Sun 27 Dec 2026 · 17 days · Singapore ⇄ Krabi</p>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-itin" aria-selected="true">Itinerary</button>
+    <button role="tab" id="t-book" aria-selected="false">Bookings</button>
+  </div>
+
+  <section id="itin"></section>
+  <section id="book" hidden></section>
+</div>
+
+<script>
+// ---------- BOOKINGS (read-only: update these only when the booking changes) ----------
+const FLIGHTS = [
+  { id:"out", airline:"Scoot", no:"TR 548", date:"2026-12-11", dep:"16:50", depPlace:"Singapore", depCode:"SIN", depTz:"GMT+8", arr:"17:40", arrPlace:"Krabi", arrCode:"KBV", arrTz:"GMT+7", dur:"1h 50m", pax:"1 booking · 1 passenger" },
+  { id:"back", airline:"Scoot", no:"TR 685", date:"2026-12-27", dep:"17:30", depPlace:"Krabi", depCode:"KBV", depTz:"GMT+7", arr:"20:30", arrPlace:"Singapore", arrCode:"SIN", arrTz:"GMT+8", dur:"2h 0m", pax:"1 booking · 1 passenger" }
+];
+const STAYS = [
+  { id:"s1", name:"Vacation Village Phra Nang Inn", area:"Ao Nang, Krabi", in:"2026-12-11", inT:"14:00", out:"2026-12-12", outT:"11:00", detail:"1 booking · 1 room" },
+  { id:"s2", name:"Tonsai Bay Resort", area:"Tonsai, Krabi", in:"2026-12-12", inT:"15:00", out:"2026-12-21", outT:"12:00", detail:"2 rooms" },
+  { id:"s4", name:"Tetris Hotel", area:"Ao Nang, Krabi", in:"2026-12-21", inT:"15:00", out:"2026-12-27", outT:"12:00", detail:"1 booking · 1 room" }
+];
+
+// ---------- DEFAULT DAY PLAN (editable; saved after you edit) ----------
+const D = (date, where, title, notes="") => ({ date, where, title, notes });
+const DEFAULT_PLAN = [
+  D("2026-12-11","Ao Nang","Travel day · arrive & stay in Ao Nang","Evening arrival."),
+  D("2026-12-12","Ao Nang → Tonsai","Climb at Ao Nang, move to Tonsai before sunset"),
+  D("2026-12-13","Ao Nang","Full climbing day"),
+  D("2026-12-14","Tonsai","",""),
+  D("2026-12-15","Tonsai","",""),
+  D("2026-12-16","Tonsai","Full climbing day ? (unconfirmed)"),
+  D("2026-12-17","Tonsai","",""),
+  D("2026-12-18","Tonsai","",""),
+  D("2026-12-19","Tonsai","Full climbing day"),
+  D("2026-12-20","Tonsai","Full climbing day"),
+  D("2026-12-21","Tonsai → Ao Nang","Work day · move back to Ao Nang"),
+  D("2026-12-22","Ao Nang","Climb + short work day"),
+  D("2026-12-23","Ao Nang","Work day"),
+  D("2026-12-24","Ao Nang","Christmas Eve · half-day work, half-day climb"),
+  D("2026-12-25","Ao Nang","Full climbing day"),
+  D("2026-12-26","Ao Nang","Full climbing day"),
+  D("2026-12-27","Ao Nang","Half-day climbing, then fly home","Flight TR 685 departs KBV 17:30, lands SIN 20:30.")
+];
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function parts(iso){ const [y,m,d]=iso.split("-").map(Number); return {y,m,d,dow:new Date(Date.UTC(y,m-1,d)).getUTCDay()}; }
+function fmt(iso, withDow=true){ const p=parts(iso); return (withDow?DOW[p.dow]+" ":"")+p.d+" "+MON[p.m-1]; }
+function nights(a,b){ return Math.round((Date.UTC(...b.split("-").map((v,i)=>i==1?v-1:+v)) - Date.UTC(...a.split("-").map((v,i)=>i==1?v-1:+v)))/864e5); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+const dayIndex = iso => Math.round((Date.UTC(...iso.split("-").map((v,i)=>i==1?v-1:+v)) - Date.UTC(2026,11,11))/864e5)+1;
+
+// locked events per date, derived from bookings
+function lockedFor(date){
+  const out=[];
+  STAYS.forEach(s=>{ if(s.out===date) out.push({t:s.outT, txt:"Check out · "+s.name}); });
+  FLIGHTS.forEach(f=>{ if(f.date===date) out.push({t:f.dep, txt:`${f.airline} ${f.no} · ${f.depCode} → ${f.arrCode}, lands ${f.arr}`}); });
+  STAYS.forEach(s=>{ if(s.in===date) out.push({t:s.inT, txt:"Check in · "+s.name}); });
+  return out.sort((a,b)=>a.t.localeCompare(b.t));
+}
+
+// ---------- bookings view ----------
+function renderBookings(){
+  let h = `<p class="note">Confirmed bookings.</p>`;
+  h += `<div class="kind" style="margin:6px 2px">Flights</div>`;
+  FLIGHTS.forEach(f=>{
+    h += `<div class="card locked"><div class="kind">${f.id==="out"?"Outbound":"Return"} · ${fmt(f.date)}</div>
+      <div class="name">${f.airline} ${f.no}</div>
+      <div class="big"><div><b>${f.dep}</b>${f.depPlace}<br><small>${f.depCode} · ${f.depTz}</small></div>
+      <div class="arrow">${f.dur}<br>──✈──</div>
+      <div style="text-align:right"><b>${f.arr}</b>${f.arrPlace}<br><small>${f.arrCode} · ${f.arrTz}</small></div></div>
+      <div class="row"><span>Status</span><span>Confirmed</span></div>
+      <div class="row"><span>Booked</span><span>${f.pax}</span></div></div>`;
+  });
+  h += `<div class="kind" style="margin:14px 2px 6px">Stays</div>`;
+  STAYS.forEach(s=>{
+    const n = nights(s.in,s.out);
+    h += `<div class="card locked"><div class="kind">${n} night${n>1?"s":""} · ${s.area}</div>
+      <div class="name">${esc(s.name)}</div>
+      <div class="row"><span>Check in</span><span>${fmt(s.in)} · ${s.inT}</span></div>
+      <div class="row"><span>Check out</span><span>${fmt(s.out)} · ${s.outT}</span></div>
+      <div class="row"><span>Booked</span><span>${s.detail}</span></div>
+      <div class="row"><span>Status</span><span>Confirmed</span></div></div>`;
+  });
+  $("#book").innerHTML = h;
+}
+
+let plan = JSON.parse(JSON.stringify(DEFAULT_PLAN));
+
+function renderItin(){
+  let h = `<div class="card" style="padding:6px 14px">`;
+  plan.forEach(d=>{
+    const p=parts(d.date), L=lockedFor(d.date);
+    h += `<div class="it"><div class="d"><b>${p.d} ${MON[p.m-1]}</b><small>${DOW[p.dow]} · Day ${dayIndex(d.date)}</small></div><div class="m">
+      <div class="t ${d.title?"":"empty"}">${d.title?esc(d.title):"—"}</div>
+      ${d.where?`<div class="w">${esc(d.where)}</div>`:""}
+      ${L.map(e=>`<div class="x">${e.t} · ${esc(e.txt)}</div>`).join("")}
+      ${d.notes?`<div class="nt">${esc(d.notes)}</div>`:""}
+    </div></div>`;
+  });
+  $("#itin").innerHTML = h + `</div>`;
+}
+const VIEWS = { itin:"#itinerary", book:"#bookings" };
+function show(which){
+  ["itin","book"].forEach(k=>{ $("#"+k).hidden = k!==which; $("#t-"+k).setAttribute("aria-selected", k===which); });
+  try{ history.replaceState(null,"", VIEWS[which]); }catch(e){}
+}
+$("#t-itin").onclick=()=>show("itin"); $("#t-book").onclick=()=>show("book");
+
+renderBookings();
+renderItin();
+if(location.hash==="#bookings") show("book");
+</script>
+</body>
+</html>
